@@ -1,7 +1,10 @@
 import numpy as np
 
+# calculating normalized LTC histograms
 def getLTC_down(Map):
     step = 2
+    
+    # downsampling
     Matrix = Map[::step, ::step]
     m, n = Matrix.shape
     
@@ -17,6 +20,7 @@ def getLTC_down(Map):
     left_lower = Matrix[2:m, :n-2]
     left = Matrix[1:m-1, :n-2]
     
+    # positive
     left_upper_po = (left_upper - central) > thres
     upper_po = (upper - central) > thres
     right_upper_po = (right_upper - central) > thres
@@ -28,6 +32,7 @@ def getLTC_down(Map):
     
     Positive = left_upper_po + upper_po + right_upper_po + right_po + right_lower_po + lower_po + left_lower_po + left_po
     
+    # negative
     left_upper_ne = (left_upper - central) < -thres
     upper_ne = (upper - central) < -thres
     right_upper_ne = (right_upper - central) < -thres

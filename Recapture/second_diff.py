@@ -1,5 +1,6 @@
 import numpy as np
 
+# Calculating second order difference maps
 def getSecondDiff(Matrix):
     m, n, _ = Matrix.shape
     

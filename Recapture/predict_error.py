@@ -1,28 +1,6 @@
 import numpy as np
 
-def CalError(M1, M2, M3, M4, threshold):
-    m, n, z = M1.shape
-    ErrorMap = []
-    
-    for channel in range(z):
-        Q = np.array([M2[:,:,channel].flatten(), M3[:,:,channel].flatten(), M4[:,:,channel].flatten()]).T
-        v = M1[:,:,channel].flatten()
-        
-        v_less_thres = (v < threshold)
-        Q_less_thres = (np.sum((Q < threshold), axis=1) > 0)
-        index_thres = (v_less_thres + Q_less_thres) > 0
-        v[index_thres] = 0
-        Q[index_thres, :] = 0
-        
-        w = np.linalg.lstsq(Q.T.dot(Q), Q.T.dot(v), rcond=None)[0]
-        
-        Error = np.log2(v + np.finfo(float).eps) - np.log2(np.abs(Q.dot(w)) + np.finfo(float).eps)
-        Error = Error.reshape((m, n))
-        
-        ErrorMap.append(Error)
-    
-    return np.array(ErrorMap)
-
+# Calcualting prediction error maps
 def getPredictError(V, H, D1, D2, threshold, Direction):
     # V, H, D1, D2: Output of getSecondDiff
     # threshold: used for noise removal
@@ -46,3 +24,55 @@ def getPredictError(V, H, D1, D2, threshold, Direction):
         PredictError = np.dstack((PredictError1, PredictError2, PredictError3, PredictError4))
     
     return PredictError
+
+def CalError(M1, M2, M3, M4, threshold):
+    m, n, z = M1.shape
+    ErrorMap = np.zeros((m, n, z))
+
+    for channel in range(z):
+        Q = np.stack([np.abs(M2[:, :, channel]).reshape(m * n),
+                      np.abs(M3[:, :, channel]).reshape(m * n),
+                      np.abs(M4[:, :, channel]).reshape(m * n)], axis=1)
+        v = np.abs(M1[:, :, channel]).reshape(m * n)
+
+        v_less_thres = v < threshold
+        Q_less_thres = np.sum(Q < threshold, axis=1) > 0
+        index_thres = np.logical_or(v_less_thres, Q_less_thres)
+
+        v[index_thres] = 0
+        Q[index_thres, :] = 0
+
+        w = np.linalg.lstsq(Q.T @ Q, Q.T @ v, rcond=None)[0]
+
+        Error = np.log2(v + np.finfo(float).eps) - np.log2(np.abs(Q @ w) + np.finfo(float).eps)
+        Error = Error.reshape((m, n))
+
+        ErrorMap[:, :, channel] = Error
+
+    return ErrorMap
+
+# def CalError(M1, M2, M3, M4, threshold):
+#     m, n, z = M1.shape
+#     ErrorMap = np.zeros((m, n, z))
+    
+#     for channel in range(z):        
+#         Q = np.stack((np.abs(M2[:, :, channel]).reshape(-1),
+#                       np.abs(M3[:, :, channel]).reshape(-1),
+#                       np.abs(M4[:, :, channel]).reshape(-1)), axis=1)
+#         v = np.abs(M1[:,:, channel]).reshape(-1, 1)
+#         v_less_thres = (v < threshold)
+#         Q_less_thres = (np.sum((Q < threshold), axis=1) > 0)
+#         index_thres = ( v_less_thres + Q_less_thres ) > 0
+#         v[index_thres] = 0
+#         Q[index_thres, :] = 0
+        
+#         # w = np.linalg.lstsq(Q.T.dot(Q), Q.T.dot(v), rcond=None)[0]
+#         w = np.linalg.solve(Q.T.dot(Q), Q.T.dot(v))
+        
+#         Error = np.log2(v + np.finfo(float).eps) - np.log2(np.abs(Q.dot(w)) + np.finfo(float).eps)
+#         # Error=v-Q*w
+#         Error = Error.reshape((m, n))
+        
+#         ErrorMap[:, :, channel] = Error
+    
+#     return ErrorMap
