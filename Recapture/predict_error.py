@@ -46,7 +46,6 @@ def CalError(M1, M2, M3, M4, threshold):
 
         Error = np.log2(v + np.finfo(float).eps) - np.log2(np.abs(Q @ w) + np.finfo(float).eps)
         Error = Error.reshape((m, n))
-
         ErrorMap[:, :, channel] = Error
 
     return ErrorMap
