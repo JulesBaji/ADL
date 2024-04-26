@@ -1,15 +1,16 @@
 import numpy as np
-from skimage import io, color
-from second_diff import *
-from predict_error import *
-from ltc_down import *
+from skimage import color
+from features.second_diff import *
+from features.predict_error import *
+from features.ltc_down import *
 
  # image: a RGB image's name
-def main(image_path):
+def RID_SPIC22(image):
     
     threshold = 3 / 255
     Direction = 3   
-    f = (io.imread(image_path) / 255.0)
+    f = image / 255.0
+    # m et n sont inverses, a revoir (image 32x21 -> f.shape = 21, 32, 3)
     m, n, z = f.shape
 
     if z == 1:
@@ -46,6 +47,7 @@ def main(image_path):
     features = np.concatenate((features_1, features_2))
     return features
     
-if __name__ == "__main__":
-    image_path = 'test32x21.jpg'
-    main(image_path)
+# if __name__ == "__main__":
+#     image_path = 'Recapture/test32x21.jpg'
+#     features = main(image_path)
+#     print(len(features))

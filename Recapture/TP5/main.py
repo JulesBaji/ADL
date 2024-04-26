@@ -2,6 +2,7 @@ from model import *
 from show import *
 from generate_train_image_pairs import *
 from generate_test_image_pairs import *
+from RID_SPIC_model import *
 from sklearn.datasets import fetch_olivetti_faces
 from tensorflow.keras import backend as k
 import numpy as np
@@ -17,13 +18,16 @@ olivetti = fetch_olivetti_faces()
 images_dataset = olivetti.images # de forme (400, 64, 64), dtype=float32, valeurs entre 0.0 et 1.0
 labels_dataset = olivetti.target # de forme (400,), dtype=int32, labels 
 
-# Etape 1 : visualisation des images
-# show(images_dataset, labels_dataset)
-
 # Etape 2 : création du modèle d’extraction de features (vecteurs de descripteurs)
-feature_extractor = create_model()
-imgA = Input(shape=(64, 64, 1))
-imgB = Input(shape=(64, 64, 1))
+# feature_extractor = create_model()
+# imgA = Input(shape=(64, 64, 1))
+# imgB = Input(shape=(64, 64, 1))
+# featA = feature_extractor(imgA)
+# featB = feature_extractor(imgB)
+
+feature_extractor = RID_SPIC_model()
+imgA = Input(shape=(64, 64, 3))
+imgB = Input(shape=(64, 64, 3))
 featA = feature_extractor(imgA)
 featB = feature_extractor(imgB)
 
