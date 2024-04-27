@@ -5,9 +5,8 @@ MaxPooling2D, GlobalAveragePooling2D
 from features.RID_SPIC22 import *
 
 def RID_SPIC_model():
-    inputs = Input(shape=(64, 64, 3))  # Entrée pour la première image
-
-    outputs = Lambda(lambda x: RID_SPIC22(x), output_shape = (324,))(inputs)
-
+    inputs = Input(shape=(900, 600, 3)) 
+    outputs = Lambda(RID_SPIC22, output_shape=(324,))(inputs)
+    
     model = Model(inputs, outputs)
     return model

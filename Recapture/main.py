@@ -1,5 +1,6 @@
 from model import *
 from show import *
+from load_data import *
 from generate_train_image_pairs import *
 from generate_test_image_pairs import *
 from RID_SPIC_model import *
@@ -7,27 +8,25 @@ from sklearn.datasets import fetch_olivetti_faces
 from tensorflow.keras import backend as k
 import numpy as np
 
-
 def euclidean_distance(vectors):
     (featA, featB) = vectors
     sum_squared = k.sum(k.square(featA - featB), axis=1, keepdims=True)
     return k.sqrt(k.maximum(sum_squared, k.epsilon()))
 
-# Préparation
-olivetti = fetch_olivetti_faces()
-images_dataset = olivetti.images # de forme (400, 64, 64), dtype=float32, valeurs entre 0.0 et 1.0
-labels_dataset = olivetti.target # de forme (400,), dtype=int32, labels 
+captured_images_path = "Recapture/SingleCaptureImages/D70S"
+recaptured_images_path = "Recapture/RecapturedImages/D70s"
+
+captured_images, captured_labels = load_data(captured_images_path)
+recaptured_images, recaptured_labels = load_data(recaptured_images_path)
+
+images_dataset, labels_dataset = filter_images_and_labels(captured_images, captured_labels, recaptured_images, recaptured_labels)
+
+print(images_dataset.shape, labels_dataset.shape)
 
 # Etape 2 : création du modèle d’extraction de features (vecteurs de descripteurs)
-# feature_extractor = create_model()
-# imgA = Input(shape=(64, 64, 1))
-# imgB = Input(shape=(64, 64, 1))
-# featA = feature_extractor(imgA)
-# featB = feature_extractor(imgB)
-
 feature_extractor = RID_SPIC_model()
-imgA = Input(shape=(64, 64, 3))
-imgB = Input(shape=(64, 64, 3))
+imgA = Input(shape=(900, 600, 3))
+imgB = Input(shape=(900, 600, 3))
 featA = feature_extractor(imgA)
 featB = feature_extractor(imgB)
 
