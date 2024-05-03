@@ -26,30 +26,29 @@ images_dataset, labels_dataset = filter_images_and_labels(captured_images, captu
 
 features = np.array([RID_SPIC22(image) for image in images_dataset])
 
-# Diviser les données en ensembles d'entraînement et de validation
 X_train, X_val, y_train, y_val = train_test_split(features, labels_dataset, test_size=0.1, random_state=2)
 
-# Définir le modèle
+# 2x324
 model = Sequential([
+    Dense(324, activation='relu', input_shape=(324,)),
+    # Dropout(0.5),
+    Dense(324, activation='relu', input_shape=(324,)),
     Dense(128, activation='relu', input_shape=(324,)),
-    Dropout(0.5),
     Dense(64, activation='relu'),
-    Dropout(0.5),
+    # Dropout(0.5),
     Dense(1, activation='sigmoid')
 ])
 
-# Compiler le modèle
-model.compile(optimizer='adam',
+optimizer = tf.keras.optimizers.Adam(0.0001)
+model.compile(optimizer,
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
-# Entraîner le modèle
 history = model.fit(X_train, y_train,
                     validation_data=(X_val, y_val),
                     batch_size=2,
-                    epochs=100)
+                    epochs=1000)
 
-# Évaluer le modèle
 loss, accuracy = model.evaluate(X_val, y_val)
 print("Loss:", loss)
 print("Accuracy:", accuracy)
