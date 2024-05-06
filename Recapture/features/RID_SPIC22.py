@@ -32,7 +32,7 @@ def RID_SPIC22(image):
     if n % 2 == 0:
         n -= 1
     
-    # Faut absolument verifier cette partie
+    # REVOIR POUR ETRE SUR
     AvgPoolImage = np.zeros((m // 2, n // 2, 3))
     m_pool, n_pool, _ = AvgPoolImage.shape
     for k in range(3):
