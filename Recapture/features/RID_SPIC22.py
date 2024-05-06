@@ -6,11 +6,12 @@ from features.ltc_down import *
 
  # image: a RGB image's name
 def RID_SPIC22(image):
-    
+       
     threshold = 3 / 255
     Direction = 3   
     f = image / 255.0
     # m et n sont inverses, a revoir (image 32x21 -> f.shape = 21, 32, 3)
+    # Ca a ptet change avec le nouveau dataset
     m, n, z = f.shape
 
     if z == 1:
@@ -30,7 +31,8 @@ def RID_SPIC22(image):
         m -= 1
     if n % 2 == 0:
         n -= 1
-        
+    
+    # Faut absolument verifier cette partie
     AvgPoolImage = np.zeros((m // 2, n // 2, 3))
     m_pool, n_pool, _ = AvgPoolImage.shape
     for k in range(3):
