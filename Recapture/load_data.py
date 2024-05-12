@@ -26,6 +26,17 @@ def load_data(images_path):
     progress_bar.close()
     return images
 
+output_dir = "modele"
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+output_file = os.path.join(output_dir, "features_and_labels.npz")
+
+if os.path.exists(output_file):
+    replace = input("Le fichier features_and_labels.npz existe déjà. Voulez-vous le remplacer ? (o/n): ")
+    if replace.lower() != 'o':
+        print("Annulation de l'exécution.")
+        exit()
+
 captured_images_path = "Recapture/SingleCaptureImages"
 recaptured_images_path = "Recapture/RecapturedImages"
 
@@ -41,5 +52,6 @@ labels_dataset = np.concatenate([captured_labels, recaptured_labels])
 images_dataset_shuffled, labels_dataset_shuffled = shuffle(images_dataset, labels_dataset)
 
 features = np.array([RID_SPIC22(image) for image in tqdm(images_dataset_shuffled, desc="Vectorisation des images", unit="image")])
-np.savez('features_and_labels.npz', features=features, labels=labels_dataset_shuffled)
-print("Images vectorisées et labels sauvegardés dans features_and_labels.npz !")
+
+np.savez(output_file, features=features, labels=labels_dataset_shuffled)
+print(f"Images vectorisées et labels sauvegardés dans {output_file}")
