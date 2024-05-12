@@ -1,4 +1,4 @@
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Dropout
 from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
@@ -42,7 +42,7 @@ model.compile(optimizer,
 history = model.fit(X_train, y_train,
                     validation_data=(X_val, y_val),
                     batch_size=32,
-                    epochs=1000)
+                    epochs=10000)
 
 loss, accuracy = model.evaluate(X_val, y_val)
     

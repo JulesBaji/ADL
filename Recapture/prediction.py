@@ -17,15 +17,19 @@ def load_data(images_path):
             images.append(image)
     return images
 
+# Chargement du modèle
+output_dir = "modele"
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+output_file = os.path.join(output_dir, "detection_recapture.h5")
+model = load_model(output_file)
+
 # Chargement des images
 image_path = "Recapture/RecapturedImages/Recapture_manuelle"
 images = load_data(image_path)
 
 # Vectorisation des images
 features = np.array([RID_SPIC22(np.array(image)) for image in tqdm(images, desc="Vectorisation des images", unit="image")])
-
-# Chargement du modèle
-model = load_model('detection_recapture.h5')
 
 # Prédictions
 predictions = model.predict(features)
