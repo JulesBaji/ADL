@@ -8,7 +8,8 @@ from tqdm import tqdm
 def load_data(images_path):
     images = []
     files_list = os.listdir(images_path)
-    for filename in tqdm(files_list, desc="Chargement des images", unit="image"):
+    folder_name = os.path.basename(images_path)
+    for filename in tqdm(files_list, desc=f"Chargement des images du dossier {folder_name}", unit="image"):
         if filename.lower().endswith((".png",".jpg")):
             image_path = os.path.join(images_path, filename)
             image = Image.open(image_path)

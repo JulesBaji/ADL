@@ -3,17 +3,27 @@ import os
 import numpy as np
 from sklearn.utils import shuffle
 from features.RID_SPIC22 import *
-from tqdm import tqdm  # Importez tqdm
+from tqdm import tqdm
+
+def count_images(images_path):
+    total_images = sum(len(files) for _, _, files in os.walk(images_path))
+    return total_images
 
 def load_data(images_path):
     images = []
-    files_list = os.listdir(images_path)
-    for filename in tqdm(files_list, desc="Chargement des images", unit="image"):
-        if filename.lower().endswith((".png",".jpg")):
-            image_path = os.path.join(images_path, filename)
-            image = Image.open(image_path)
-            image = image.resize((600, 900))
-            images.append(image)
+    total_images = count_images(images_path)
+    folder_name = os.path.basename(images_path)
+    progress_bar = tqdm(total=total_images, desc=f"Chargement des images du dossier {folder_name}", unit="image")
+    for subdir, _, files in os.walk(images_path):
+        for filename in files:
+            if filename.lower().endswith((".png", ".jpg")):
+                image_path = os.path.join(subdir, filename)
+                image = Image.open(image_path)
+                image = image.resize((600, 900))
+                images.append(image)
+                progress_bar.update(1)
+                
+    progress_bar.close()
     return images
 
 captured_images_path = "Recapture/SingleCaptureImages"
