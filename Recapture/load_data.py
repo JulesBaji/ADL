@@ -42,4 +42,4 @@ images_dataset_shuffled, labels_dataset_shuffled = shuffle(images_dataset, label
 
 features = np.array([RID_SPIC22(image) for image in tqdm(images_dataset_shuffled, desc="Vectorisation des images", unit="image")])
 np.savez('features_and_labels.npz', features=features, labels=labels_dataset_shuffled)
-print("Features and labels saved successfully!")
+print("Images vectorisées et labels sauvegardés dans features_and_labels.npz !")
