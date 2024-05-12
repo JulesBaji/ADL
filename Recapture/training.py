@@ -1,15 +1,16 @@
-from load_data import *
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 import numpy as np
+import os
 
 output_dir = "modele"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-data = np.load('features_and_labels.npz')
+data_file = os.path.join(output_dir, 'features_and_labels.npz')
+data = np.load(data_file)
 features = data['features']
 labels_dataset = data['labels']
 
