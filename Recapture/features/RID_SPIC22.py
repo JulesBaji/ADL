@@ -28,6 +28,7 @@ def RID_SPIC22(image):
     #calculate average pooled image 
     if m % 2 == 0:
         m -= 1
+        
     if n % 2 == 0:
         n -= 1
     
@@ -36,6 +37,8 @@ def RID_SPIC22(image):
     m_pool, n_pool, _ = AvgPoolImage.shape
     for k in range(3):
         AvgPoolImage[:, :, k] = (HSV[:m_pool*2:2, :n_pool*2:2, k] + HSV[1:m_pool*2:2, :n_pool*2:2, k] + HSV[:m_pool*2:2, 1:n_pool*2:2, k] + HSV[1:m_pool*2:2, 1:n_pool*2:2, k]) / 4
+    # for k in range(3):
+    #     AvgPoolImage[:, :, k] = (HSV[1:m_pool*2:2, 1:n_pool*2:2, k] + HSV[2:m_pool*2:2, 1:n_pool*2:2, k] + HSV[1:m_pool*2:2, 2:n_pool*2:2, k] + HSV[2:m_pool*2:2, 2:n_pool*2:2, k]) / 4
 
     
     V, H, D1, D2 = getSecondDiff(AvgPoolImage)  
@@ -47,8 +50,3 @@ def RID_SPIC22(image):
     
     features = np.concatenate((features_1, features_2))
     return features
-    
-# if __name__ == "__main__":
-#     image_path = 'Recapture/test32x21.jpg'
-#     features = main(image_path)
-#     print(len(features))

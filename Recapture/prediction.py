@@ -2,20 +2,31 @@ from features.RID_SPIC22 import *
 from tensorflow.keras.models import load_model
 from PIL import Image
 import numpy as np
+import os
+from tqdm import tqdm
 
-def load_image(image_path):
-    image = Image.open(image_path)
-    image = image.resize((600, 900))
-    return image
+def load_data(images_path):
+    images = []
+    files_list = os.listdir(images_path)
+    for filename in tqdm(files_list, desc="Chargement des images", unit="image"):
+        if filename.lower().endswith((".png",".jpg")):
+            image_path = os.path.join(images_path, filename)
+            image = Image.open(image_path)
+            image = image.resize((600, 900))
+            images.append(image)
+    return images
 
-image_path = "Recapture/test images/images.jpeg"
-image = load_image(image_path)
-features = np.array(RID_SPIC22(np.array(image)))
+# Chargement des images
+image_path = "Recapture/RecapturedImages/Recapture_manuelle"
+images = load_data(image_path)
 
+# Vectorisation des images
+features = np.array([RID_SPIC22(np.array(image)) for image in tqdm(images, desc="Vectorisation des images", unit="image")])
+
+# Chargement du modèle
 model = load_model('detection_recapture.h5')
-prediction_captured = model.predict(np.expand_dims(features, axis=0))
 
-if prediction_captured[0][0] > 0.5:
-    print(prediction_captured[0][0], " : l'image est une recapture.")
-else:
-    print(prediction_captured[0][0], " : l'image n'est pas une recapture.")
+# Prédictions
+predictions = model.predict(features)
+percentage_recapture = (np.sum(predictions > 0.5) / len(predictions)) * 100
+print("Prédictions réussies : ", percentage_recapture, "%")

@@ -18,9 +18,7 @@ model = Sequential([
     Dense(324, activation='relu', input_shape=(324,)),
     Dropout(0.5),
     Dense(128, activation='relu', input_shape=(324,)),
-    Dropout(0.5),
     Dense(64, activation='relu'),
-    Dropout(0.5),
     Dense(1, activation='sigmoid')
 ])
 
@@ -32,7 +30,7 @@ model.compile(optimizer,
 history = model.fit(X_train, y_train,
                     validation_data=(X_val, y_val),
                     batch_size=32,
-                    epochs=10000)
+                    epochs=1000)
 
 loss, accuracy = model.evaluate(X_val, y_val)
 model.save("detection_recapture.h5")
