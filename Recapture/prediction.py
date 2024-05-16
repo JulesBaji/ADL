@@ -9,12 +9,17 @@ output_dir = "modele"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-output_file_modele = os.path.join(output_dir, "detection_recapture.h5")
-output_file_features = os.path.join(output_dir, "features_and_labels.npz")
+# features_and_labels_dataset_only.npz pour le dataset sans le dataset manuel, features_and_labels.npz pour le dataset complet
+features_file = os.path.join(output_dir, "features_and_labels_dataset_only.npz")
+# features_file = os.path.join(output_dir, "features_and_labels.npz")
 
-model = load_model(output_file_modele)
+# detection_recapture_dataset_only.h5 pour le modèle entraîné sans le dataset manuel, detection_recapture.h5 pour le modèle entraîné avec le dataset complet
+modele_file = os.path.join(output_dir, "detection_recapture_dataset_only.h5")
+# modele_file = os.path.join(output_dir, "detection_recapture.h5")
 
-data = np.load(output_file_features)
+model = load_model(modele_file)
+
+data = np.load(features_file)
 test_features = data['test_features']
 test_labels = data['test_labels']
 
