@@ -6,16 +6,22 @@ from sklearn.model_selection import train_test_split
 from features.RID_SPIC22 import *
 from tqdm import tqdm
 
-def count_images(images_path):
-    total_images = sum(len(files) for _, _, files in os.walk(images_path))
+def count_images(images_path, exclude_dirs=None):
+    total_images = 0
+    for subdir, _, files in os.walk(images_path):
+        if exclude_dirs and os.path.basename(subdir) in exclude_dirs:
+            continue
+        total_images += len(files)
     return total_images
 
-def load_data(images_path):
+def load_data(images_path, exclude_dirs=None):
     images = []
-    total_images = count_images(images_path)
+    total_images = count_images(images_path, exclude_dirs)
     folder_name = os.path.basename(images_path)
     progress_bar = tqdm(total=total_images, desc=f"Chargement des images du dossier {folder_name}", unit="image")
     for subdir, _, files in os.walk(images_path):
+        if exclude_dirs and os.path.basename(subdir) in exclude_dirs:
+            continue
         for filename in files:
             if filename.lower().endswith((".png", ".jpg")):
                 image_path = os.path.join(subdir, filename)
@@ -32,17 +38,34 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 output_file = os.path.join(output_dir, "features_and_labels.npz")
 
-if os.path.exists(output_file):
-    replace = input("Le fichier features_and_labels.npz existe déjà. Voulez-vous le remplacer ? (o/n): ")
-    if replace.lower() != 'o':
-        print("Annulation de l'exécution.")
-        exit()
+
 
 captured_images_path = "Recapture/SingleCaptureImages"
 recaptured_images_path = "Recapture/RecapturedImages"
 
-captured_images = load_data(captured_images_path)
-recaptured_images = load_data(recaptured_images_path)
+exclude_dirs = ["Recapture_manuelle", "Capture_manuelle"]
+captured_images, recaptured_images = None, None
+
+if exclude_manual_dataset := input("Voulez-vous exclure les images des dossiers 'Recapture_manuelle' et 'Capture_manuelle' ? (o/n): ") == 'o':
+    output_file = os.path.join(output_dir, "features_and_labels_dataset_only.npz")
+
+    if os.path.exists(output_file):
+        replace = input(f"Le fichier {output_file} existe déjà. Voulez-vous le remplacer ? (o/n): ")
+        if replace.lower() != 'o':
+            print("Annulation de l'exécution.")
+            exit()
+
+    captured_images = load_data(captured_images_path, exclude_dirs)
+    recaptured_images = load_data(recaptured_images_path, exclude_dirs)
+else:   
+    if os.path.exists(output_file):
+        replace = input(f"Le fichier {output_file} existe déjà. Voulez-vous le remplacer ? (o/n): ")
+        if replace.lower() != 'o':
+            print("Annulation de l'exécution.")
+            exit()
+
+    captured_images = load_data(captured_images_path)
+    recaptured_images = load_data(recaptured_images_path)
 
 captured_labels = np.zeros(len(captured_images))
 recaptured_labels = np.ones(len(recaptured_images))
