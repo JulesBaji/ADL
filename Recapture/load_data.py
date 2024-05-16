@@ -2,6 +2,7 @@ from PIL import Image
 import os
 import numpy as np
 from sklearn.utils import shuffle
+from sklearn.model_selection import train_test_split
 from features.RID_SPIC22 import *
 from tqdm import tqdm
 
@@ -49,9 +50,17 @@ recaptured_labels = np.ones(len(recaptured_images))
 images_dataset = np.concatenate([captured_images, recaptured_images])
 labels_dataset = np.concatenate([captured_labels, recaptured_labels])
 
-images_dataset_shuffled, labels_dataset_shuffled = shuffle(images_dataset, labels_dataset)
+images_dataset_shuffled, labels_dataset_shuffled = shuffle(images_dataset, labels_dataset, random_state=42)
 
-features = np.array([RID_SPIC22(image) for image in tqdm(images_dataset_shuffled, desc="Vectorisation des images", unit="image")])
+# Split the dataset into 90% training and 10% test
+train_images, test_images, train_labels, test_labels = train_test_split(
+    images_dataset_shuffled, labels_dataset_shuffled, test_size=0.1, random_state=42
+)
 
-np.savez(output_file, features=features, labels=labels_dataset_shuffled)
+# Vectorize the training images
+train_features = np.array([RID_SPIC22(image) for image in tqdm(train_images, desc="Vectorisation des images d'entraînement", unit="image")])
+# Vectorize the test images
+test_features = np.array([RID_SPIC22(image) for image in tqdm(test_images, desc="Vectorisation des images de test", unit="image")])
+
+np.savez(output_file, train_features=train_features, train_labels=train_labels, test_features=test_features, test_labels=test_labels)
 print(f"Images vectorisées et labels sauvegardés dans {output_file}")

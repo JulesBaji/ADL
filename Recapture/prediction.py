@@ -1,37 +1,27 @@
 from features.RID_SPIC22 import *
 from tensorflow.keras.models import load_model
-from PIL import Image
 import numpy as np
 import os
-from tqdm import tqdm
-
-def load_data(images_path):
-    images = []
-    files_list = os.listdir(images_path)
-    folder_name = os.path.basename(images_path)
-    for filename in tqdm(files_list, desc=f"Chargement des images du dossier {folder_name}", unit="image"):
-        if filename.lower().endswith((".png",".jpg")):
-            image_path = os.path.join(images_path, filename)
-            image = Image.open(image_path)
-            image = image.resize((600, 900))
-            images.append(image)
-    return images
+from sklearn.metrics import accuracy_score
 
 # Chargement du modèle
 output_dir = "modele"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
-output_file = os.path.join(output_dir, "detection_recapture.h5")
-model = load_model(output_file)
 
-# Chargement des images
-image_path = "Recapture/RecapturedImages/Recapture_manuelle"
-images = load_data(image_path)
+output_file_modele = os.path.join(output_dir, "detection_recapture.h5")
+output_file_features = os.path.join(output_dir, "features_and_labels.npz")
 
-# Vectorisation des images
-features = np.array([RID_SPIC22(np.array(image)) for image in tqdm(images, desc="Vectorisation des images", unit="image")])
+model = load_model(output_file_modele)
+
+data = np.load(output_file_features)
+test_features = data['test_features']
+test_labels = data['test_labels']
 
 # Prédictions
-predictions = model.predict(features)
-percentage_recapture = (np.sum(predictions > 0.5) / len(predictions)) * 100
-print("Prédictions réussies : ", percentage_recapture, "%")
+predictions = model.predict(test_features)
+predicted_labels = (predictions > 0.5).astype(int).flatten()
+
+# Calcul de la précision
+accuracy = accuracy_score(test_labels, predicted_labels)
+print(f"Accuracy: {accuracy * 100:.2f}%")
