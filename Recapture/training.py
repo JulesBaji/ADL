@@ -1,11 +1,10 @@
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
+from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint
 from sklearn.model_selection import train_test_split
 import numpy as np
 import os
-from tensorflow.keras.regularizers import l2
 
 output_dir = "modele"
 if not os.path.exists(output_dir):
@@ -47,11 +46,20 @@ model.compile(optimizer, loss='binary_crossentropy', metrics=['accuracy'])
 # Callbacks
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=1000, min_lr=1e-7)
 
+# Enregistre le meilleur modèle basé sur la précision de validation
+checkpoint_callback = ModelCheckpoint(
+    filepath=modele_file,
+    save_best_only=True,
+    monitor='val_accuracy',  # Métrique à surveiller pour déterminer le meilleur modèle
+    mode='max',  # Maximiser la métrique de validation
+    verbose=1
+)
+
 history = model.fit(X_train, y_train,
                     validation_data=(X_val, y_val),
                     batch_size=32,
-                    epochs=10000,
-                    callbacks=reduce_lr)
+                    epochs=20000,
+                    callbacks=[reduce_lr, checkpoint_callback])
 
 loss, accuracy = model.evaluate(X_val, y_val)
 model.save(features_file)
