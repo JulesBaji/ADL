@@ -62,5 +62,5 @@ history = model.fit(X_train, y_train,
                     callbacks=[reduce_lr, checkpoint_callback])
 
 loss, accuracy = model.evaluate(X_val, y_val)
-model.save(features_file)
-print(f"Modèle enregistré dans {features_file}")
+model.save(modele_file)
+print(f"Modèle enregistré dans {modele_file}")
