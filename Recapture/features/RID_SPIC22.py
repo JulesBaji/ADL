@@ -1,8 +1,11 @@
 import numpy as np
 from skimage import color
-from features.second_diff import *
-from features.predict_error import *
-from features.ltc_down import *
+# from features.second_diff import *
+# from features.predict_error import *
+# from features.ltc_down import *
+from second_diff import *
+from predict_error import *
+from ltc_down import *
 
  # image: a RGB image's name
 def RID_SPIC22(image):
@@ -10,8 +13,6 @@ def RID_SPIC22(image):
     threshold = 3 / 255
     Direction = 3   
     f = image / 255.0
-    # m et n sont inverses, a revoir (image 32x21 -> f.shape = 21, 32, 3)
-    # Ca a ptet change avec le nouveau dataset
     m, n, z = f.shape
 
     if z == 1:
@@ -32,14 +33,15 @@ def RID_SPIC22(image):
         
     if n % 2 == 0:
         n -= 1
-    
-    # REVOIR POUR ETRE SUR
-    AvgPoolImage = np.zeros((m // 2, n // 2, 3))
-    m_pool, n_pool, _ = AvgPoolImage.shape
-    for k in range(3):
-        AvgPoolImage[:, :, k] = (HSV[:m_pool*2:2, :n_pool*2:2, k] + HSV[1:m_pool*2:2, :n_pool*2:2, k] + HSV[:m_pool*2:2, 1:n_pool*2:2, k] + HSV[1:m_pool*2:2, 1:n_pool*2:2, k]) / 4
+
+    # AvgPoolImage = np.zeros((m // 2, n // 2, 3))
+    # m_pool, n_pool, _ = AvgPoolImage.shape
     # for k in range(3):
-    #     AvgPoolImage[:, :, k] = (HSV[1:m_pool*2:2, 1:n_pool*2:2, k] + HSV[2:m_pool*2:2, 1:n_pool*2:2, k] + HSV[1:m_pool*2:2, 2:n_pool*2:2, k] + HSV[2:m_pool*2:2, 2:n_pool*2:2, k]) / 4
+    #     AvgPoolImage[:, :, k] = (HSV[:m_pool*2:2, :n_pool*2:2, k] + HSV[1:m_pool*2:2, :n_pool*2:2, k] + HSV[:m_pool*2:2, 1:n_pool*2:2, k] + HSV[1:m_pool*2:2, 1:n_pool*2:2, k]) / 4
+
+    AvgPoolImage = np.zeros((m // 2, n // 2, 3))
+    for k in range(3):
+        AvgPoolImage[:,:,k] = (HSV[1:m:2, 1:n:2, k] + HSV[1:m:2, 2:n:2, k] + HSV[2:m:2, 1:n:2, k] + HSV[2:m:2, 2:n:2, k]) / 4
 
     
     V, H, D1, D2 = getSecondDiff(AvgPoolImage)  
@@ -51,3 +53,8 @@ def RID_SPIC22(image):
     
     features = np.concatenate((features_1, features_2))
     return features
+
+from PIL import Image
+image_path = 'Recapture/SingleCaptureImages/D40/DS-05-0015-S%D40.JPG'
+image = Image.open(image_path)
+print(RID_SPIC22(np.array(image)))
