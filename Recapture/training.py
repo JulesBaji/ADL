@@ -44,7 +44,7 @@ optimizer = Adam(0.0001)
 model.compile(optimizer, loss='binary_crossentropy', metrics=['accuracy'])
 
 # Callbacks
-reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=1000, min_lr=1e-7)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=500, min_lr=1e-7)
 
 # Enregistre le meilleur modèle basé sur la précision de validation
 checkpoint_callback = ModelCheckpoint(
