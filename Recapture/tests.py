@@ -43,6 +43,7 @@ def load_data(images_path):
 
 # Chargement des images
 image_path = "Recapture/RecapturedImages/Recapture_manuelle"
+# image_path = "Recapture/SingleCaptureImages/Capture_manuelle"
 images = load_data(image_path)
 # Vectorisation des images
 test_features = np.array([RID_SPIC22(np.array(image)) for image in tqdm(images, desc="Vectorisation des images", unit="image")])
@@ -64,7 +65,8 @@ model = load_model(modele_file)
 
 # Prédictions
 predictions = model.predict(test_features)
-predicted_capture_labels = (predictions <= 0.5).astype(int).flatten()
+# True == 1, False == 0 !
+predicted_capture_labels = (predictions > 0.5).astype(int).flatten()
 
 # Calcul de la précision
 test_capture_labels = np.zeros_like(predicted_capture_labels)
