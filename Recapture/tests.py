@@ -5,6 +5,29 @@ import numpy as np
 import os
 from tqdm import tqdm
 from sklearn.metrics import accuracy_score
+from random import randint
+
+def random_crop_and_resize(image, target_size=(640, 480), aspect_ratio=(4, 3)):
+    aspect_ratio_width, aspect_ratio_height = aspect_ratio
+    
+    original_width, original_height = image.size
+
+    if original_width / aspect_ratio_width < original_height / aspect_ratio_height:
+        crop_width = original_width
+        crop_height = int(original_width * aspect_ratio_height / aspect_ratio_width)
+    else:
+        crop_height = original_height
+        crop_width = int(original_height * aspect_ratio_width / aspect_ratio_height)
+
+    left = randint(0, original_width - crop_width)
+    top = randint(0, original_height - crop_height)
+    right = left + crop_width
+    bottom = top + crop_height
+
+    image_cropped = image.crop((left, top, right, bottom))
+    image_resized = image_cropped.resize(target_size)
+
+    return image_resized
 
 def load_data(images_path):
     images = []
@@ -14,7 +37,7 @@ def load_data(images_path):
         if filename.lower().endswith((".png",".jpg")):
             image_path = os.path.join(images_path, filename)
             image = Image.open(image_path)
-            image = image.resize((600, 900))
+            image = random_crop_and_resize(image)
             images.append(image)
     return images
 
