@@ -6,7 +6,7 @@ Une photo recapturée est la photo d'un écran ou d'une impression. Le programme
 
 ## Méthode
 
-1. **Descripteurs** (`Recapture/features/`) : descripteurs RID-SPIC d'après un article de recherche (erreurs de prédiction, différences secondes, descripteurs LTC), soit un vecteur de 324 valeurs par image.
+1. **Descripteurs** (`Recapture/features/`) : descripteurs d'après l'article [Recaptured image forensics based on local ternary count of high order prediction error](https://doi.org/10.1016/j.image.2022.116662) (Signal Processing: Image Communication, 2022) : erreurs de prédiction d'ordre élevé, différences secondes et comptes ternaires locaux (LTC), soit un vecteur de 324 valeurs par image.
 2. **Classifieur** (`Recapture/training.py`) : réseau de neurones dense (324-128-64-1) en Keras, avec réduction du taux d'apprentissage et sauvegarde du meilleur modèle.
 3. **Évaluation** (`Recapture/tests.py`) : jeu de test séparé, avec recadrages aléatoires. **91 % de précision** sur le jeu de test.
 
