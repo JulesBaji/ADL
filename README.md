@@ -1,6 +1,6 @@
 # Détection de photos recapturées
 
-Projet d'apprentissage profond du master Informatique ISICG (Université de Limoges, 2024), réalisé en groupe.
+Projet d'apprentissage profond du master Informatique ISICG (Université de Limoges, 2024).
 
 Une photo recapturée est la photo d'un écran ou d'une impression. Le programme dit si une image est une photo directe ou une recapture.
 
