@@ -4,6 +4,12 @@ Projet d'apprentissage profond du master Informatique ISICG (Université de Limo
 
 Une photo recapturée est la photo d'un écran ou d'une impression. Le programme dit si une image est une photo directe ou une recapture.
 
+| Photo directe | Photo d'un écran (recapture) |
+|:---:|:---:|
+| ![Photo directe et zoom à 100 %](docs/photo_directe.jpg) | ![Photo d'écran et zoom à 100 %](docs/photo_ecran.jpg) |
+
+*Deux photos de test prises à la main, avec en dessous un zoom à 100 % sur la zone encadrée : la recapture laisse apparaître la trame de l'écran, que les descripteurs cherchent à détecter.*
+
 ## Méthode
 
 1. **Descripteurs** (`Recapture/features/`) : descripteurs d'après l'article [Recaptured image forensics based on local ternary count of high order prediction error](https://doi.org/10.1016/j.image.2022.116662) (Signal Processing: Image Communication, 2022) : erreurs de prédiction d'ordre élevé, différences secondes et comptes ternaires locaux (LTC), soit un vecteur de 324 valeurs par image.
